@@ -1,9 +1,9 @@
 # PETICIONES Y RESPUESTAS HTTP MAS COMUNES
 
-## PETICIONES HTTP
+## PETICIONES HTTP :calling:
 HTTP contiene un grupo de peticiones que ayudan a especificar la accion que requiere realizar a determinado elemento.
 
-### Clasificacion
+### Clasificacion :label:
 Las peticiones se pueden clasificar en *Safe* e *Idenpotent*
 
 * #### Peticiones HTTP Safe
@@ -12,7 +12,7 @@ Las peticiones se pueden clasificar en *Safe* e *Idenpotent*
 * #### Peticiones HTTP Idempotent
   Se considera un metodo HTTP idenpotent si una solicitud identica puede realizarse ona o varias veces consecutivas opteniendo el mismo resultado dejando en el mismo estado al servidor
 
-### Lista de Peticiones HTTP
+### Lista de Peticiones HTTP :scroll:
 
 * #### Peticiones HTTP: **GET**
   El método GET significa recuperar cualquier información (en forma de una entidad) identificada por el Request-URI
@@ -38,10 +38,10 @@ Las peticiones se pueden clasificar en *Safe* e *Idenpotent*
 * #### Peticiones HTTP: **TRACE**
   Éste método se utiliza para realizar pruebas de eco (de retornos) de mensajes en el camino que existe hacia un recurso determinado.
 
-## RESPUESTAS HTTP
+## RESPUESTAS HTTP :speech_balloon:
 Los códigos de estado HTTP describen de forma abreviada la respuesta HTTP. El primer dígito del código de estado especifica uno de los 5 tipos de respuesta, el mínimo para que un cliente pueda trabajar con HTTP es que reconozca estas 5 clases.
 
-### Tipos de Respuestas HTTP
+### Tipos de Respuestas HTTP :bookmark_tabs:
 Este tipo de código de estado indica una respuesta provisional.
 
 * #### 1XX Respuestas informativas
@@ -69,7 +69,7 @@ Este tipo de código de estado indica una respuesta provisional.
   -**408 Request Timeout.** El cliente no ha enviado un request con el tiempo necesario con el que el servidor estaba preparado para esperar.  
 
 * #### 5XX Errores del servidor
-  El servidor ha fallado al completar una solicitud aparentemente válida. Cuando los códigos de estado empiezan por 5 indica casos en los que el servidor sabe que tiene un error o realmente es incapaz de procesar el request. Por ejemplo:
+  El servidor ha fallado al completar una solicitud aparentemente válida. Cuando los códigos de estado empiezan por 5 indica casos en los que el servidor sabe que tiene un error o realmente es incapaz de procesar el request.  
   -**500 Internal Server Error.** Error genérico, cuando se ha dado una condición no esperada y no se puede concretar el mensaje.  
   -**502 Bad Gateway.** El server actuaba como puerta de entrada o proxy y recibió una respuesta inválida del servidor upstream.  
   -**503 Service Unavailable.** El servidor está actualmente no disponible, ya sea por mantenimiento o por sobrecarga.  
