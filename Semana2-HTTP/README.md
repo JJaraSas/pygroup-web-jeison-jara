@@ -6,11 +6,11 @@ HTTP contiene un grupo de peticiones que ayudan a especificar la accion que requ
 ### Clasificacion
 Las peticiones se pueden clasificar en *Safe* e *Idenpotent*
 
-#### Peticiones HTTP Safe
-Un metodo HTTP es considerado safe o seguro si no altera el servidor, es decir si es de solo lectura.
+* #### Peticiones HTTP Safe
+  Un metodo HTTP es considerado safe o seguro si no altera el servidor, es decir si es de solo lectura.
 
-#### Peticiones HTTP Idempotent
-Se considera un metodo HTTP idenpotent si una solicitud identica puede realizarse ona o varias veces consecutivas opteniendo el mismo resultado dejando en el mismo estado al servidor
+* #### Peticiones HTTP Idempotent
+  Se considera un metodo HTTP idenpotent si una solicitud identica puede realizarse ona o varias veces consecutivas opteniendo el mismo resultado dejando en el mismo estado al servidor
 
 ### Lista de Peticiones HTTP
 
