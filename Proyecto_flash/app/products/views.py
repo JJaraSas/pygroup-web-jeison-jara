@@ -203,7 +203,7 @@ def create_product_form_old():
         RESPONSE_BODY["data"] = product
         status_code = HTTPStatus.CREATED
         return RESPONSE_BODY, status_code
-    return render_template("create_category_form_old.html")
+    return render_template("create_product_form_old.html")
 
 
 @products.route('/product_success')
