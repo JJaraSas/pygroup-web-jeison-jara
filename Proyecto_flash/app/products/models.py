@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import jsonify
+# from flask import jsonify
 
 from app.db import db, ma
 
@@ -10,6 +10,7 @@ class Product(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
+    image = db.Column(db.String(500), default="https://bit.ly/3loPYXP")
     price = db.Column(db.Integer, nullable=False)
     weight = db.Column(db.Integer, default=1)
     description = db.Column(db.String(500), nullable=True)
@@ -65,6 +66,19 @@ def create_new_category(name):
 
     return None
 
+
+def create_new_product(name, price, weight, description, refundable,
+                       category_id, image):
+    product = Product(name=name, price=price, weight=weight,
+                      description=description, refundable=refundable,
+                      category_id=category_id, image=image)
+    db.session.add(product)
+    if db.session.commit():
+        return product
+
+    return None
+
+
 def get_all_products():
     products_qs = Product.query.all()
     product_schema = ProductSchema()
@@ -80,33 +94,35 @@ def get_product_by_id(id):
     p = product_schema.dump(product_qs)
     return p
 
-'''----modelos agregados----'''
 
-def create_new_product(name, price, weight, description, refundable, category_id):
-    
-    product = Product(name=name, price=price, weight=weight, description=description, refundable=refundable, category_id=category_id)
+'''----modelos agregados----
+
+
+def create_new_product(name, price, weight, description, refundable,
+                       category_id):
+
+    product = Product(name=name, price=price, weight=weight,
+                      description=description, refundable=refundable,
+                      category_id=category_id)
     db.session.add(product)
     if db.session.commit():
         return product
 
     return None
-    """category = db.session.query.filter(id == category_id)
-    if category != []:
-        return {"info" :ok} 
-    return {"No hay info"}
-    --------//--------
-    category = Product.query.filter(id == category_id)
-    if category == []:
-        print ("No hay categoria")
-    else:
-        print (category)
-    """
+'''
 
-def create_new_stock(product_id, quantity):
-    
-    stock = Stock(product_id=product_id, quantity=quantity)
-    db.session.add(stock)
-    if db.session.commit():
-        return stock
+
+def add_stock(product_id, quantity):
+    stock = Stock.query.filter_by(product_id=product_id).first()
+    if stock is None:
+        stock = Stock(product_id=product_id, quantity=quantity)
+        db.session.add(stock)
+        if db.session.commit():
+            return stock
+    else:
+        stock = Stock.query.filter_by(product_id=product_id).update(
+            {"quantity": Stock.quantity + quantity})
+        if db.session.commit():
+            return stock
 
     return None

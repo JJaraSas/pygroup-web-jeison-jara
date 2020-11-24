@@ -1,8 +1,20 @@
 from http import HTTPStatus
-from flask import Blueprint, Response, request
+from flask import Blueprint, Response, request, render_template, redirect, \
+    url_for
 
-from app.products.models import get_all_categories, create_new_category, \
-    get_all_products, get_product_by_id, create_new_product, create_new_stock
+
+from app.products.forms import (
+    CreateCategoryForm,
+    CreateProductForm
+)
+from app.products.models import (
+    get_all_categories,
+    create_new_category,
+    get_all_products,
+    get_product_by_id,
+    create_new_product,
+    add_stock
+)
 
 products = Blueprint("products", __name__, url_prefix='/products')
 
@@ -104,10 +116,103 @@ def get_products_that_need_restock():
 
 
 @products.route('/register-product-stock/<int:id>', methods=['PUT', 'POST'])
-def register_product_refund_in_stock():
-    pass
+def register_product_refund_in_stock(id):
+
+    # TODO Complete this view to update stock for product when a register for
+    # this products exists. If not create the new register in DB
+ 
+    status_code = HTTPStatus.CREATED
+    if request.method == "PUT":
+        data = request.json
+        stock = add_stock(id, data["quantity"])
+        RESPONSE_BODY["message"] = \
+            "Stock for this product were updated successfully!"
+        status_code = HTTPStatus.OK
+    elif request.method == "POST":
+        data = request.json
+        stock = add_stock(id, data["quantity"])
+        RESPONSE_BODY["message"] = \
+            "Stock for this product were created successfully!"
+        RESPONSE_BODY["data"] = stock
+        status_code = HTTPStatus.CREATED
+    else:
+        RESPONSE_BODY["message"] = "Method not Allowed"
+        status_code = HTTPStatus.METHOD_NOT_ALLOWED
+    return RESPONSE_BODY, status_code
+
+
+@products.route('/create-category-form', methods=['GET', 'POST'])
+def create_category_form():
+    form_category = CreateCategoryForm()
+    if request.method == 'POST' and form_category.validate():
+        create_new_category(name=form_category.name.data)
+        return redirect(url_for('products.category_success'))
+
+    return render_template('create_category_form.html', form=form_category)
+
+
+@products.route('/create-category-form-old', methods=['GET', 'POST'])
+def create_category_form_old():
+    if request.method == 'POST':
+        category = create_new_category(request.form["name"])
+        RESPONSE_BODY["message"] = "Se agrego la categoria {} con \
+            exito".format(request.form["name"])
+        RESPONSE_BODY["data"] = category
+        status_code = HTTPStatus.CREATED
+        return RESPONSE_BODY, status_code
+    return render_template("create_category_form_old.html")
+
+
+@products.route('/category_success')
+def category_success():
+    return render_template('category_success.html')
+
+
+@products.route('/create-product-form', methods=['GET', 'POST'])
+def create_product_form():
+    form_product = CreateProductForm() 
+    if request.method == 'POST' and form_product.validate():
+        if form_product.refundable.data == "1":
+            form_product.refundable.data = True
+        else:
+            form_product.refundable.data = False
+        create_new_product(name=form_product.name.data,
+                           price=form_product.price.data,
+                           weight=form_product.weight.data,
+                           description=form_product.description.data,
+                           refundable=form_product.refundable.data,
+                           category_id=form_product.category_id.data,
+                           image=form_product.image.data)
+        return redirect(url_for('products.product_success'))
+
+    return render_template('create_product_form.html', form=form_product)
+
+
+@products.route('/create-product-form-old', methods=['GET', 'POST'])
+def create_product_form_old():
+    if request.method == 'POST':
+        product = create_new_product(request.form["name"],
+                                     request.form["price"],
+                                     request.form["weight"],
+                                     request.form["description"],
+                                     request.form["refundable"],
+                                     request.form["category_id"],
+                                     request.form["image"])
+        RESPONSE_BODY["message"] = "Se agrego el producto {} con \
+            exito".format(request.form["name"])
+        RESPONSE_BODY["data"] = product
+        status_code = HTTPStatus.CREATED
+        return RESPONSE_BODY, status_code
+    return render_template("create_category_form_old.html")
+
+
+@products.route('/product_success')
+def product_success():
+    return render_template('product_success.html')
+
 
 '''------Vistas agregadas------'''
+
 
 @products.route('/add-product', methods=['POST'])
 def create_product():
@@ -119,26 +224,11 @@ def create_product():
     status_code = HTTPStatus.METHOD_NOT_ALLOWED
     if request.method == "POST":
         data = request.json
-        product = create_new_product(data["name"], data["price"], data["weight"], data["description"], data["refundable"], data["category_id"])
+        product = create_new_product(data["name"], data["price"],
+                                     data["weight"], data["description"],
+                                     data["refundable"], data["category_id"])
         RESPONSE_BODY["message"] = "OK. Product created!"
         RESPONSE_BODY["data"] = product
-        status_code = HTTPStatus.CREATED
-
-    return RESPONSE_BODY, status_code
-
-
-@products.route('/add-stock', methods=['POST'])
-def create_stock():
-    """
-    Agregar stock a la base de datos
-    """
-    RESPONSE_BODY["message"] = "Method not allowed"
-    status_code = HTTPStatus.METHOD_NOT_ALLOWED
-    if request.method == "POST":
-        data = request.json
-        stock = create_new_stock(data["product_id"], data["quantity"])
-        RESPONSE_BODY["message"] = "OK. Stock created!"
-        RESPONSE_BODY["data"] = stock
         status_code = HTTPStatus.CREATED
 
     return RESPONSE_BODY, status_code
