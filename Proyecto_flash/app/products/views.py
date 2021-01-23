@@ -120,7 +120,7 @@ def register_product_refund_in_stock(id):
 
     # TODO Complete this view to update stock for product when a register for
     # this products exists. If not create the new register in DB
- 
+
     status_code = HTTPStatus.CREATED
     if request.method == "PUT":
         data = request.json
@@ -170,7 +170,7 @@ def category_success():
 
 @products.route('/create-product-form', methods=['GET', 'POST'])
 def create_product_form():
-    form_product = CreateProductForm() 
+    form_product = CreateProductForm()
     if request.method == 'POST' and form_product.validate():
         if form_product.refundable.data == "1":
             form_product.refundable.data = True
@@ -232,3 +232,14 @@ def create_product():
         status_code = HTTPStatus.CREATED
 
     return RESPONSE_BODY, status_code
+
+
+@products.route('/show-catalog', methods=['GET'])
+def show_products_catalog():
+    products = get_all_products()
+    my_info = {"products": products, "pygroup": "PyGroup 01", "Jeison": 9105}
+    return render_template('catalog.html', my_info=my_info)
+    # Consultar la BD y extraer todos los productos disponibles
+    # Almacenar la informacion en una variable de contexto
+    # Renderizar la plantilla que tengamos en HTML e insertar
+    # los datos de nuestra variable de contexto
