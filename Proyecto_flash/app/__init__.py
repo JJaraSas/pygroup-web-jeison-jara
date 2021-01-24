@@ -14,7 +14,7 @@ def create_app(config=DevelopmentConfig):
     migrate = Migrate(app, db)
     csrf = CSRFProtect(app)
     app.config.from_object(config)
- 
+
     db.init_app(app)
     ma.init_app(app)
     csrf.init_app(app)

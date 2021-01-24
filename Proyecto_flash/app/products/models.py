@@ -3,6 +3,7 @@ from datetime import datetime
 # from flask import jsonify
 
 from app.db import db, ma
+from app.products.exceptions import ProductNotFoundError
 
 
 class Product(db.Model):
@@ -22,7 +23,7 @@ class Product(db.Model):
 
 class ProductSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Product 
+        model = Product
         fields = ["id", "name", "price", "description", "image", "refundable"]
 
 
@@ -64,7 +65,7 @@ def create_new_category(name):
     if db.session.commit():
         return category
 
-    return None
+    return category
 
 
 def create_new_product(name, price, weight, description, refundable,
@@ -76,7 +77,7 @@ def create_new_product(name, price, weight, description, refundable,
     if db.session.commit():
         return product
 
-    return None
+    return product
 
 
 def get_all_products():
@@ -90,9 +91,12 @@ def get_all_products():
 
 def get_product_by_id(id):
     product_qs = Product.query.filter_by(id=id).first()
-    product_schema = ProductSchema()
-    p = product_schema.dump(product_qs)
-    return p
+    if product_qs:
+        product_schema = ProductSchema()
+        p = product_schema.dump(product_qs)
+        return p
+    else:
+        raise ProductNotFoundError
 
 
 '''----modelos agregados----
