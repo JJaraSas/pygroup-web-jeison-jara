@@ -3,7 +3,10 @@ import pytest
 from app import create_app
 from app.db import create_all, drop_all, db
 from app.products.models import Product, Category
+from app.products.views import create_product_form
 from conf.config import TestingConfig
+
+from flask import template_rendered
 
 
 @pytest.fixture
@@ -22,7 +25,7 @@ def app():
 @pytest.fixture
 def product(app):
     with app.app_context():
-        product = Product(name="fake-product", price=1, description="hello", 
+        product = Product(name="fake-product", price=1, description="hello",
                           refundable=True)
         db.session.add(product)
         db.session.commit()
@@ -45,3 +48,21 @@ def test_client(app):
     ctx.push()
     yield testing_client
     ctx.pop()
+
+
+@pytest.fixture
+def captured_templates(app):
+    """
+    No comprendi la forma de enviar la platilla para el test desde aqui
+    Documentacion: https://flask.palletsprojects.com/en/1.1.x/signals/
+    """
+    recorded = []
+
+    def record(sender, template, context, **extra):
+        template = create_product_form()
+        recorded.append((template, context))
+        template_rendered.connect(record, app)
+        try:
+            yield recorded
+        finally:
+            template_rendered.disconnect(record, app)

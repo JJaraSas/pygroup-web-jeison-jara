@@ -1,7 +1,7 @@
 import pytest
 
 from app.products.models import (get_product_by_id,
-                                 create_new_category, 
+                                 create_new_category,
                                  Category)
 from app.products.exceptions import ProductNotFoundError
 

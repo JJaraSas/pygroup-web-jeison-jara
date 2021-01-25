@@ -99,23 +99,6 @@ def get_product_by_id(id):
         raise ProductNotFoundError
 
 
-'''----modelos agregados----
-
-
-def create_new_product(name, price, weight, description, refundable,
-                       category_id):
-
-    product = Product(name=name, price=price, weight=weight,
-                      description=description, refundable=refundable,
-                      category_id=category_id)
-    db.session.add(product)
-    if db.session.commit():
-        return product
-
-    return None
-'''
-
-
 def add_stock(product_id, quantity):
     stock = Stock.query.filter_by(product_id=product_id).first()
     if stock is None:

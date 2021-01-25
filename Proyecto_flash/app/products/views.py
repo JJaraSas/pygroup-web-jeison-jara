@@ -57,7 +57,6 @@ def get_categories():
     """
     categories = get_all_categories()
     status_code = HTTPStatus.OK
-
     if categories:
         RESPONSE_BODY["message"] = "OK. Categories List"
         RESPONSE_BODY["data"] = categories
