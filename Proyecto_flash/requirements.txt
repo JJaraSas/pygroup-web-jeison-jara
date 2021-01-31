@@ -14,3 +14,4 @@ Werkzeug==1.0.1
 Flask-Migrate==2.5.3
 Flask-WTF==0.14.3
 pytest==6.2.1
+Flask-Login==0.5.0
