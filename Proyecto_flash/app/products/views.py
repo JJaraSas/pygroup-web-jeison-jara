@@ -16,6 +16,8 @@ from app.products.models import (
     add_stock
 )
 
+from flask_login import login_required
+
 products = Blueprint("products", __name__, url_prefix='/products')
 
 EMPTY_SHELVE_TEXT = "Empty shelve!"
@@ -30,6 +32,7 @@ RESPONSE_BODY = {
 
 
 @products.route('/dummy-product', methods=['GET', 'POST'])
+@login_required
 def dummy_product():
     """ This method test the request types. If is GET Type it will
     render the text Products in h1 label with code 500.
@@ -42,6 +45,7 @@ def dummy_product():
 
 
 @products.route('/dummy-product-2')
+@login_required
 def dummy_product_two():
     """ This method shows how Response object could be used to make API
     methods.
@@ -69,6 +73,7 @@ def get_categories():
 
 
 @products.route('/add-category', methods=['POST'])
+@login_required
 def create_category():
     """
     Agrega categoria a la base de datos
@@ -110,11 +115,13 @@ def get_product_stock(product_id):
 
 
 @products.route('/need-restock')
+@login_required
 def get_products_that_need_restock():
     pass
 
 
 @products.route('/register-product-stock/<int:id>', methods=['PUT', 'POST'])
+@login_required
 def register_product_refund_in_stock(id):
 
     # TODO Complete this view to update stock for product when a register for
@@ -141,6 +148,7 @@ def register_product_refund_in_stock(id):
 
 
 @products.route('/create-category-form', methods=['GET', 'POST'])
+@login_required
 def create_category_form():
     form_category = CreateCategoryForm()
     if request.method == 'POST' and form_category.validate():
@@ -151,6 +159,7 @@ def create_category_form():
 
 
 @products.route('/create-category-form-old', methods=['GET', 'POST'])
+@login_required
 def create_category_form_old():
     if request.method == 'POST':
         category = create_new_category(request.form["name"])
@@ -163,11 +172,13 @@ def create_category_form_old():
 
 
 @products.route('/category_success')
+@login_required
 def category_success():
     return render_template('category_success.html')
 
 
 @products.route('/create-product-form', methods=['GET', 'POST'])
+@login_required
 def create_product_form():
     form_product = CreateProductForm()
     if request.method == 'POST' and form_product.validate():
@@ -188,6 +199,7 @@ def create_product_form():
 
 
 @products.route('/create-product-form-old', methods=['GET', 'POST'])
+@login_required
 def create_product_form_old():
     if request.method == 'POST':
         product = create_new_product(request.form["name"],
@@ -206,6 +218,7 @@ def create_product_form_old():
 
 
 @products.route('/product_success')
+@login_required
 def product_success():
     return render_template('product_success.html')
 
@@ -214,6 +227,7 @@ def product_success():
 
 
 @products.route('/add-product', methods=['POST'])
+@login_required
 def create_product():
     """
     Agregar producto a la base de datos

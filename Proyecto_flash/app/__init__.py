@@ -19,6 +19,7 @@ def create_app(config=DevelopmentConfig):
     app.config.from_object(config)
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
+    login_manager.login_message = "Ingrese para acceder a esta pagina."
 
     login_manager.init_app(app)
     db.init_app(app)
