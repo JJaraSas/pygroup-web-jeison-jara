@@ -1,5 +1,5 @@
-from flask import Blueprint, Response, request, render_template, redirect, \
-    url_for, flash
+from flask import Blueprint, request, render_template, \
+    flash
 
 from app.products.models import create_new_product
 

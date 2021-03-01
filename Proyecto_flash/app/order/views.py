@@ -1,6 +1,5 @@
 from flask import Blueprint, request, render_template, redirect, url_for
 from app.order.models import (
-    RefOrderStatusCode,
     get_active_order,
     get_order_items,
     update_quantity_order,
@@ -10,6 +9,7 @@ from app.products.models import get_order_products
 from flask_login import login_required, current_user
 
 order = Blueprint("order", __name__, url_prefix="")
+
 
 @order.route('/shop_cart', methods=['GET', 'POST'])
 @login_required
