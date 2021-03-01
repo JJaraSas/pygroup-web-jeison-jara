@@ -1,8 +1,6 @@
 from http import HTTPStatus
 from flask import Blueprint, Response, request, render_template, redirect, \
-    url_for
-
-
+    url_for, flash
 from app.products.forms import (
     CreateCategoryForm,
     CreateProductForm
@@ -12,11 +10,18 @@ from app.products.models import (
     create_new_category,
     get_all_products,
     get_product_by_id,
+    get_category_products_by_id,
     create_new_product,
     add_stock
 )
 
-from flask_login import login_required
+from app.order.models import (
+    get_active_order,
+    create_order,
+    add_item_order
+)
+
+from flask_login import login_required, current_user
 
 products = Blueprint("products", __name__, url_prefix='/products')
 
@@ -69,7 +74,18 @@ def get_categories():
         RESPONSE_BODY["data"] = categories
         status_code = HTTPStatus.NOT_FOUND
 
-    return RESPONSE_BODY, status_code
+    my_info = {"categories": categories, "status_code": status_code}
+
+    return render_template('categories.html', my_info=my_info)
+
+
+@products.route('/category/<int:id>')
+def get_category_products(id):
+    products = get_category_products_by_id(id)
+    RESPONSE_BODY["data"] = products
+
+    my_info = {"products": products}
+    return render_template('category.html', my_info=my_info)
 
 
 @products.route('/add-category', methods=['POST'])
@@ -101,12 +117,36 @@ def get_products():
     return RESPONSE_BODY, 200
 
 
-@products.route('/product/<int:id>')
+@products.route('/product/<int:id>', methods=['GET', 'POST'])
 def get_product(id):
-    product = get_product_by_id(id)
+    '''
+    GET method = renderiza el template de producto
+    POST method = agrega el producto a la orden, si no hay orden se crea una
+    '''
+    if request.method == "POST":
 
-    RESPONSE_BODY["data"] = product
-    return RESPONSE_BODY, 200
+        quantity = int(request.form.get("quantity"))
+
+        active_order = get_active_order(current_user)
+
+        if active_order is None:
+            create_order(current_user.id)
+            active_order = get_active_order(current_user)
+
+        if add_item_order(active_order.id, id, quantity):
+            # Mensaje
+            flash("Producto Agregado", 'success')
+        else:
+            flash("Error al Agregar producto", 'error')
+
+        return redirect(url_for('products.get_product', id=id))
+
+    if request.method == "GET":
+        product = get_product_by_id(id)
+        RESPONSE_BODY["data"] = product
+        my_info = {"product": product}
+
+    return render_template('product.html', my_info=my_info)
 
 
 @products.route('/product-stock/<int:id>')
@@ -214,7 +254,7 @@ def create_product_form_old():
         RESPONSE_BODY["data"] = product
         status_code = HTTPStatus.CREATED
         return RESPONSE_BODY, status_code
-    return render_template("create_product_form_old.html")
+    return redirect(url_for('admin.add_product'))
 
 
 @products.route('/product_success')
